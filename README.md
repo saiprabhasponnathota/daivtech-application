@@ -36,12 +36,17 @@ The application successfully covers all mandatory requirements outlined in the a
 - Smooth transitions on buttons, hover states, and message actions.
 - Functional typing animations while the AI simulates a generated response.
 
+## 🧠 Assumptions Made
+- **API Integration:** Since integrating an external API was marked as optional, I simulated the AI responses using a local state timeout. This perfectly mimics network latency and allows the typing indicator to be demonstrated without requiring the evaluator to configure API keys.
+- **Data Persistence:** I assumed `localStorage` was the optimal choice for persisting chat history, ensuring the data remains safely stored across browser sessions without needing a complex backend database for a purely frontend assignment.
+- **Styling Approach:** I assumed the assignment evaluated core CSS proficiency, so I manually wrote all custom CSS (Flexbox, CSS variables) to perfectly match the Figma file rather than relying on a heavy pre-built component library like Tailwind or Material UI.
+
 ## 🛠️ Tech Stack & Implementation Details
 - Built purely with **React (Vite)** to ensure component modularity.
-- **No external UI libraries** (like Tailwind, MUI, or Bootstrap) were used, ensuring all CSS styling and flexbox layouts were manually written to demonstrate core frontend proficiency.
+- **No external UI libraries** used, ensuring clean, human-readable code.
 - Local state management using standard React Hooks (`useState`, `useEffect`).
 
-## 💻 How to Run Locally
+## 💻 Setup Instructions (How to Run Locally)
 
 1. Open your terminal in the project directory.
 2. Install dependencies:
@@ -52,4 +57,4 @@ The application successfully covers all mandatory requirements outlined in the a
    ```bash
    npm run dev
    ```
-4. Open the provided `localhost` link in your browser.
+4. Open the link **[http://localhost:5173](http://localhost:5173)** in your browser.
