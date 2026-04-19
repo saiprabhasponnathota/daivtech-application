@@ -1,0 +1,125 @@
+import { useState, useEffect } from 'react';
+import Sidebar from './components/Sidebar';
+import ChatArea from './components/ChatArea';
+import './App.css';
+
+export default function App() {
+  // storing all chats in state
+  const [chats, setChats] = useState([]);
+  const [currentChatId, setCurrentChatId] = useState(null);
+  const [selectedEngine, setSelectedEngine] = useState('Neural Nexus');
+
+  // load chats from localStorage when app starts
+  useEffect(() => {
+    const savedChats = localStorage.getItem('chats');
+    if (savedChats) {
+      const parsed = JSON.parse(savedChats);
+      setChats(parsed);
+      if (parsed.length > 0) {
+        setCurrentChatId(parsed[0].id);
+      }
+    }
+  }, []);
+
+  // save chats to localStorage whenever they change
+  useEffect(() => {
+    if (chats.length > 0) {
+      localStorage.setItem('chats', JSON.stringify(chats));
+    }
+  }, [chats]);
+
+  // create new chat
+  const createNewChat = () => {
+    const newChat = {
+      id: Date.now(),
+      title: 'New Chat',
+      messages: []
+    };
+    setChats([newChat, ...chats]);
+    setCurrentChatId(newChat.id);
+  };
+
+  // send message and get AI response
+  const sendMessage = (text) => {
+    if (!text.trim()) return;
+
+    // add user message
+    const userMsg = {
+      id: Date.now(),
+      type: 'user',
+      text: text,
+      time: new Date().toLocaleTimeString()
+    };
+
+    // update current chat with new message
+    const updatedChats = chats.map(chat => {
+      if (chat.id === currentChatId) {
+        return { ...chat, messages: [...chat.messages, userMsg] };
+      }
+      return chat;
+    });
+    setChats(updatedChats);
+
+    // simulate AI response after 1 second
+    setTimeout(() => {
+      const aiMsg = {
+        id: Date.now() + 1,
+        type: 'ai',
+        text: `[${selectedEngine}] I got your message: "${text}". That's interesting!`,
+        time: new Date().toLocaleTimeString()
+      };
+
+      const finalChats = updatedChats.map(chat => {
+        if (chat.id === currentChatId) {
+          return { ...chat, messages: [...chat.messages, aiMsg] };
+        }
+        return chat;
+      });
+      setChats(finalChats);
+    }, 1000);
+  };
+
+  // delete chat
+  const deleteChat = (chatId) => {
+    const newChats = chats.filter(c => c.id !== chatId);
+    setChats(newChats);
+    if (currentChatId === chatId) {
+      setCurrentChatId(newChats.length > 0 ? newChats[0].id : null);
+    }
+  };
+
+  // delete message from current chat
+  const deleteMessage = (msgId) => {
+    const updatedChats = chats.map(chat => {
+      if (chat.id === currentChatId) {
+        return {
+          ...chat,
+          messages: chat.messages.filter(m => m.id !== msgId)
+        };
+      }
+      return chat;
+    });
+    setChats(updatedChats);
+  };
+
+  const currentChat = chats.find(c => c.id === currentChatId);
+
+  return (
+    <div className="app">
+      <Sidebar
+        chats={chats}
+        currentChatId={currentChatId}
+        onNewChat={createNewChat}
+        onSelectChat={setCurrentChatId}
+        onDeleteChat={deleteChat}
+      />
+      <ChatArea
+        chat={currentChat}
+        selectedEngine={selectedEngine}
+        onEngineChange={setSelectedEngine}
+        onSendMessage={sendMessage}
+        onDeleteMessage={deleteMessage}
+      />
+    </div>
+  );
+}
